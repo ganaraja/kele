@@ -1,4 +1,5 @@
 require "httparty"
+require "roadmap"
 
 class InvalidStudentCodeError < StandardError
   def initialize(msg="invalid email or password")
@@ -8,6 +9,7 @@ end
 
 class Kele
   include HTTParty
+  include Roadmap
 
   def initialize(email, password)
     response = self.class.post(base_api_endpoint("sessions"), body: { "email": email, "password": password })
@@ -34,11 +36,6 @@ class Kele
     @mentor_availability = JSON.parse(response.body)
   end
 
-  def get_roadmap(roadmap_id)
-    response = self.class.get(base_api_endpoint("roadmaps/#{roadmap_id}"), headers: { "authorization" => @auth_token })
-    @roadmap = JSON.parse(response.body)
-  end
-    
   private
     def base_api_endpoint(end_point)
       "https://www.bloc.io/api/v1/#{end_point}"
